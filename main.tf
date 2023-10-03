@@ -19,6 +19,6 @@ resource "random_string" "suffix" {
 
 
 provider "aws" {
-  region = var.region
-  profile = "aws-demo"  
+  region  = var.region
+  profile = "aws-demo"
 }

@@ -23,7 +23,7 @@ module "eks" {
 
   # Cluster Endpoint Setting
   cluster_endpoint_private_access = true
-  cluster_endpoint_public_access  = true
+  cluster_endpoint_public_access  = false
 
   # Network Setting
   vpc_id     = local.vpc_id
@@ -81,34 +81,4 @@ module "eks" {
   aws_auth_accounts = [
     "750132647424"
   ]
-}
-
-// 프라이빗 서브넷 태그
-resource "aws_ec2_tag" "private_subnet_tag" {
-  for_each    = toset(local.private_subnets)
-  resource_id = each.value
-  key         = "kubernetes.io/role/internal-elb"
-  value       = "1"
-}
-
-resource "aws_ec2_tag" "private_subnet_cluster_tag" {
-  for_each    = toset(local.private_subnets)
-  resource_id = each.value
-  key         = "kubernetes.io/cluster/${local.cluster_name}"
-  value       = "owned"
-}
-
-resource "aws_ec2_tag" "private_subnet_karpenter_tag" {
-  for_each    = toset(local.private_subnets)
-  resource_id = each.value
-  key         = "karpenter.sh/discovery/${local.cluster_name}"
-  value       = local.cluster_name
-}
-
-// 퍼블릭 서브넷 태그
-resource "aws_ec2_tag" "public_subnet_tag" {
-  for_each    = toset(local.public_subnets)
-  resource_id = each.value
-  key         = "kubernetes.io/role/elb"
-  value       = "1"
 }
